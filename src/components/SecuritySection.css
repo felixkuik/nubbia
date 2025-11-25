@@ -1,0 +1,40 @@
+.security-section {
+    padding: 6rem 0;
+    background-color: var(--white);
+    text-align: center;
+}
+
+.security-section h2 {
+    font-size: 2.5rem;
+    margin-bottom: 1.5rem;
+    font-weight: 800;
+    color: var(--text-dark);
+}
+
+.security-section p {
+    font-size: 1.1rem;
+    color: var(--text-light);
+    margin-bottom: 3rem;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.security-badges {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+}
+
+.badge {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    color: #4b5563;
+    padding: 1rem 2rem;
+    background: #f9fafb;
+    border-radius: 50px;
+    border: 1px solid #eee;
+}

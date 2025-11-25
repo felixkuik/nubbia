@@ -1,0 +1,47 @@
+.industry-section {
+    padding: 6rem 0;
+    background-color: var(--bg-light);
+}
+
+.industry-content {
+    display: flex;
+    align-items: center;
+    gap: 4rem;
+}
+
+.industry-text {
+    flex: 1;
+}
+
+.industry-text h2 {
+    font-size: 2.5rem;
+    margin-bottom: 1.5rem;
+    font-weight: 800;
+    color: var(--text-dark);
+}
+
+.industry-text p {
+    font-size: 1.1rem;
+    color: var(--text-light);
+    margin-bottom: 2rem;
+    line-height: 1.8;
+}
+
+.industry-visual {
+    flex: 1;
+    background: white;
+    padding: 2rem;
+    border-radius: 20px;
+    box-shadow: var(--shadow-lg);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 300px;
+    font-size: 5rem;
+}
+
+@media (max-width: 768px) {
+    .industry-content {
+        flex-direction: column;
+    }
+}
