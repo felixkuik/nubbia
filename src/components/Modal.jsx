@@ -21,10 +21,19 @@ const Modal = ({ isOpen, onClose }) => {
             return;
         }
 
-        emailjs.sendForm(
+        const formData = new FormData(form.current);
+        const values = Object.fromEntries(formData.entries());
+
+        const templateParams = {
+            name: `${values.user_name} ${values.user_lastname}`,
+            time: new Date().toLocaleString('es-ES'),
+            message: `Nuevo lead interesado en demo.\nEmail de contacto: ${values.user_email}`
+        };
+
+        emailjs.send(
             import.meta.env.VITE_EMAILJS_SERVICE_ID,
             import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
-            form.current,
+            templateParams,
             import.meta.env.VITE_EMAILJS_PUBLIC_KEY
         )
             .then((result) => {
