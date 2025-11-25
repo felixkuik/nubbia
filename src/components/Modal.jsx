@@ -1,14 +1,44 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
+import emailjs from '@emailjs/browser';
 import './Modal.css';
 
 const Modal = ({ isOpen, onClose }) => {
+    const form = useRef();
+    const [status, setStatus] = useState('idle'); // idle, sending, success, error
+
     if (!isOpen) return null;
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        // Handle form submission logic here
-        alert("¡Gracias! Nos pondremos en contacto contigo pronto.");
-        onClose();
+        setStatus('sending');
+
+        // Check if env vars are set
+        if (!import.meta.env.VITE_EMAILJS_SERVICE_ID ||
+            !import.meta.env.VITE_EMAILJS_TEMPLATE_ID ||
+            !import.meta.env.VITE_EMAILJS_PUBLIC_KEY) {
+            alert("Error de configuración: Faltan las claves de EmailJS en el archivo .env");
+            setStatus('error');
+            return;
+        }
+
+        emailjs.sendForm(
+            import.meta.env.VITE_EMAILJS_SERVICE_ID,
+            import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
+            form.current,
+            import.meta.env.VITE_EMAILJS_PUBLIC_KEY
+        )
+            .then((result) => {
+                console.log(result.text);
+                setStatus('success');
+                setTimeout(() => {
+                    onClose();
+                    setStatus('idle');
+                }, 2000);
+            }, (error) => {
+                console.log(error.text);
+                setStatus('error');
+                alert("Hubo un error al enviar el mensaje. Por favor intenta de nuevo.");
+            });
     };
 
     return (
@@ -19,21 +49,36 @@ const Modal = ({ isOpen, onClose }) => {
                     <h2>Solicitar Demo</h2>
                     <p>Déjanos tus datos y te contactaremos para agendar una demostración personalizada.</p>
                 </div>
-                <form onSubmit={handleSubmit}>
-                    <div className="form-group">
-                        <label htmlFor="nombre">Nombre</label>
-                        <input type="text" id="nombre" required placeholder="Tu nombre" />
+
+                {status === 'success' ? (
+                    <div style={{ textAlign: 'center', padding: '2rem 0', color: '#22c595' }}>
+                        <h3>¡Mensaje enviado correctamente!</h3>
+                        <p style={{ color: '#6b7280', marginTop: '0.5rem' }}>Te contactaremos pronto.</p>
                     </div>
-                    <div className="form-group">
-                        <label htmlFor="apellidos">Apellidos</label>
-                        <input type="text" id="apellidos" required placeholder="Tus apellidos" />
-                    </div>
-                    <div className="form-group">
-                        <label htmlFor="email">Email Corporativo</label>
-                        <input type="email" id="email" required placeholder="nombre@empresa.com" />
-                    </div>
-                    <button type="submit" className="btn-primary btn-submit">Enviar Solicitud</button>
-                </form>
+                ) : (
+                    <form ref={form} onSubmit={handleSubmit}>
+                        <div className="form-group">
+                            <label htmlFor="user_name">Nombre</label>
+                            <input type="text" name="user_name" id="user_name" required placeholder="Tu nombre" />
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="user_lastname">Apellidos</label>
+                            <input type="text" name="user_lastname" id="user_lastname" required placeholder="Tus apellidos" />
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="user_email">Email Corporativo</label>
+                            <input type="email" name="user_email" id="user_email" required placeholder="nombre@empresa.com" />
+                        </div>
+                        <button
+                            type="submit"
+                            className="btn-primary btn-submit"
+                            disabled={status === 'sending'}
+                            style={{ opacity: status === 'sending' ? 0.7 : 1 }}
+                        >
+                            {status === 'sending' ? 'Enviando...' : 'Enviar Solicitud'}
+                        </button>
+                    </form>
+                )}
             </div>
         </div>
     );
